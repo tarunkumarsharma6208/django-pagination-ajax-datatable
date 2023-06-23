@@ -1,0 +1,13 @@
+<div class="pagination">
+            {% for i in page_range %}
+                {% if i == obj_paginator.num_pages %}
+                    <a style="margin-left: 5px;" href="{{ i }}">{{ i }}</a>
+                {% elif i <= 3 or i >= obj_paginator.num_pages - 2 or i == obj_paginator.page.number or i == obj_paginator.page.number - 1 or i == obj_paginator.page.number + 1 %}
+                    <a style="margin-left: 5px;" href="{{ i }}">{{ i }}</a>
+                {% elif i == 4 and obj_paginator.page.number > 5 %}
+                    <span style="margin-left: 5px;">...</span>
+                {% elif i == obj_paginator.num_pages - 3 and obj_paginator.page.number < obj_paginator.num_pages - 4 %}
+                    <span style="margin-left: 5px;">...</span>
+                {% endif %}
+            {% endfor %}
+        </div>

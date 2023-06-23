@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Pagination in Django</title>
+    <style>
+        .pagination {
+        display: inline-block;
+    }
+    .pagination a {
+        color: black;
+        float: left;
+        padding: 8px 16px;
+        text-decoration: none;
+    }
+    .pagination a.active {
+        background-color: #4CAF50;
+        color: white;
+    }
+    .pagination a:hover:not(.active) {
+        background-color: #ddd;
+    }
+    .pagination .ellipsis {
+        margin-left: 5px;
+    }
+    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+
+        <div id="articles">
+            {% for i in first_page %}
+            <h2>{{i.name}}</h2>
+            <p>{{i.price}}</p>
+            {% endfor %}
+        </div>
+
+
+        
+        <div class="pagination">
+            {% if first_page.has_previous %}
+                <a href="{{ first_page.previous_page_number() }}">Previous</a>
+            {% endif %}
+            
+            {% for i in page_range %}
+                <a style="margin-left: 5px;" href="{{ i }}">{{ i }}</a>
+            {% endfor %}
+            
+            {% if first_page.has_next %}
+                <a href="{{ first_page.next_page_number() }}">Next</a>
+            {% endif %}
+        </div>
+        
+        
+        
+        
+        
+
+    </div>
+    <script>
+        $(document).ready(function () {
+            // Load the first page's data on page load
+            loadPageData(1);
+
+            // Handle click event of pagination links
+            $('a').click(function (event) {
+                // Prevent default actions
+                event.preventDefault();
+                var page_no = $(this).attr('href');
+                loadPageData(page_no);
+            });
+
+            // Function to load page data via AJAX request
+            function loadPageData(page_no) {
+                alert(page_no)
+                $.ajax({
+                    type: "POST",
+                    url: "{{url('display_pagination')}}",
+                    data: {
+                        page_no: page_no,
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        $('#articles').html('');
+                        $.each(response.results, function (i, val) {
+                            $('#articles').append('<h2>' + val.name + '</h2><p>' + val.price + '</p>');
+                        });
+                    },
+                    error: function () {
+                        alert('Error Occurred');
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>
